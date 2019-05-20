@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+}
+
+group 'ccepedam'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation fileTree(dir: 'myJars', include: ['*.jar'])
+    compile fileTree(dir: 'myJars', include: ['*.jar'])
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'My_Package.DATAGUI'
+        )
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File All',
+                'Implementation-Version': version,
+                'Main-Class': 'My_Package.DATAGUI'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
